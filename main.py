@@ -21,17 +21,20 @@ try:
     headers = all_df.columns.to_list()
 
     keyword_col = st.selectbox(label='Select KEYWORD column name:', options=headers)
-    query_list = list(all_df[keyword_col].unique())
+    query_list = list(all_df[keyword_col].unique())[:5500]
+    list_end = len(query_list)
+    st.write(f"we found {len(query_list)} rows!")
     st.write(query_list[:10])
 
 
-    sameUrl = st.slider('How many URLs do you want to pair?',0,10,6)
-
-    list_end = len(query_list)
+    sameUrl = st.slider('How many URLs do you want to pair?',0,10,6)  
+    
 except:
     pass
 
 step = 5000
+
+final_df = pd.DataFrame()
 
 if st.button('Start'):
     for start in range(0,list_end+1,step):
@@ -71,7 +74,8 @@ if st.button('Start'):
                 return result_data
 
         text = st.subheader('Sending request. It might take a while, So please wait!')
-        final_df = asyncio.run(main())
+        temp_df = asyncio.run(main())
+        final_df = pd.concat([final_df,temp_df])
     
     
 
