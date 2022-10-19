@@ -7,7 +7,6 @@ from networkx.algorithms import community
 from datetime import datetime
 
 
-
 st.header('Clustering App')
 
 
@@ -22,7 +21,7 @@ try:
     headers = all_df.columns.to_list()
 
     keyword_col = st.selectbox(label='Select KEYWORD column name:', options=headers)
-    query_list = list(all_df[keyword_col].unique())[:5500]
+    query_list = list(all_df[keyword_col].unique())
     list_end = len(query_list)
     st.write(f"we found {len(query_list)} rows!")
     st.write(query_list[:10])
@@ -78,8 +77,6 @@ if st.button('Start'):
         temp_df = asyncio.run(main())
         final_df = pd.concat([final_df,temp_df])
     
-    
-
     text.subheader('Clustering Started!')
     keyword_list = final_df['query'].drop_duplicates().to_list()
     data_frame_google = final_df[final_df['position']<11]
@@ -87,6 +84,7 @@ if st.button('Start'):
     grouped_df = join_df.groupby(['query_x', 'query_y']).nunique()
     grouped_df = grouped_df[grouped_df.link>=sameUrl]
     
+
     group_dict = grouped_df.to_dict()
 
     G = nx.Graph()
@@ -110,13 +108,13 @@ if st.button('Start'):
 
     cluster_df =  pd.DataFrame(clusters_dict_list)
     total_df = pd.merge(final_df,cluster_df,on='query',how='left')
+    
     text.subheader('Done! You can download it now:')
     
-
     @st.cache
     def convert_df(df):
         # IMPORTANT: Cache the conversion to prevent computation on every rerun
-        return df.to_csv().encode('utf-8')
+        return df.to_csv(index=False).encode('utf-8')
 
     csv = convert_df(total_df)
     today = datetime.today()
@@ -126,5 +124,3 @@ if st.button('Start'):
         file_name=f'clustering-{str(today)}.csv',
         mime='text/csv',
     )
-
-##
