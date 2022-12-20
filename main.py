@@ -12,25 +12,33 @@ st.header('Clustering App')
 
 api_key = st.text_input(label='Aves API key:',max_chars=28)
 
+mode = st.radio(
+    "Which format do you want to input your data?",
+    ('Text', 'CSV'))
 
-uploaded_file = st.file_uploader("Choose your file:",)
+if mode == 'Text':
+    input_text = st.text_area(label='Test',placeholder='''https://test.com\nhttps://test.com''',height=200)
+    query_list = input_text.split('\n')
 
-try:
-    all_df = pd.read_csv(uploaded_file)
+else:
+    try:
+        uploaded_file = st.file_uploader("Choose your file:",)
+        all_df = pd.read_csv(uploaded_file)
+        headers = all_df.columns.to_list()
+        keyword_col = st.selectbox(label='Select KEYWORD column name:', options=headers)
+        query_list = list(all_df[keyword_col].unique())
+    except:
+        pass
 
-    headers = all_df.columns.to_list()
-
-    keyword_col = st.selectbox(label='Select KEYWORD column name:', options=headers)
-    query_list = list(all_df[keyword_col].unique())
-    list_end = len(query_list)
-    st.write(f"we found {len(query_list)} rows!")
-    st.write(query_list[:10])
 
 
-    sameUrl = st.slider('How many URLs do you want to pair?',0,10,6)  
+list_end = len(query_list)
+st.write(f"we found {len(query_list)} rows!")
+st.write(query_list[:10])
 
-except:
-    pass
+
+sameUrl = st.slider('How many URLs do you want to pair?',0,10,6)  
+
 
 step = 5000
 
