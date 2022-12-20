@@ -17,7 +17,7 @@ mode = st.radio(
     ('Text', 'CSV'))
 
 if mode == 'Text':
-    input_text = st.text_area(label='Test',placeholder='''https://test.com\nhttps://test.com''',height=200)
+    input_text = st.text_area(label='Enter keywords:',placeholder='''Keyword1\nKeyword2''',height=200)
     query_list = input_text.split('\n')
 
 else:
